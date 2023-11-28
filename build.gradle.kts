@@ -1,6 +1,7 @@
 import org.gradle.api.JavaVersion.VERSION_11
 import org.gradle.api.JavaVersion.VERSION_13
 import org.gradle.api.JavaVersion.VERSION_1_9
+import org.checkerframework.gradle.plugin.CheckerFrameworkExtension
 
 plugins {
     `java-library`
@@ -8,6 +9,8 @@ plugins {
     signing
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
     id("net.researchgate.release") version "3.0.2" apply false
+    //id("org.checkerframework") apply false
+    id("org.checkerframework") version "0.6.35" apply false
 }
 
 repositories {
@@ -25,6 +28,7 @@ allprojects {
     description = "An easy to use multithreaded library for creating Discord bots in Java"
 
     apply(plugin = "java-library")
+    apply(plugin = "org.checkerframework")
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -49,6 +53,19 @@ apply(from = "gradle/event-dispatcher-generation.gradle")
 apply(from = "gradle/checkstyle.gradle.kts")
 apply(from = "gradle/increment-version.gradle.kts")
 apply(from = "gradle/generate-changelog.gradle.kts")
+
+configure<CheckerFrameworkExtension> {
+    apply(plugin = "org.checkerframework")
+    checkers = listOf(
+            "org.checkerframework.checker.optional.OptionalChecker"
+    )
+    extraJavacArgs = listOf(
+            "-AsuppressWarnings=type.anno.before.modifier,type.anno.before.decl.anno",
+            "-AassumePure"
+    )
+    excludeTests = true
+
+}
 
 configure<PublishingExtension> {
     allprojects {
