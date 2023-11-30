@@ -33,6 +33,19 @@ allprojects {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    apply(plugin = "org.checkerframework")
+    configure<CheckerFrameworkExtension> {
+      apply(plugin = "org.checkerframework")
+      checkers = listOf(
+              "org.checkerframework.checker.optional.OptionalChecker"
+      )
+      extraJavacArgs = listOf(
+              "-AsuppressWarnings=type.anno.before.modifier,type.anno.before.decl.anno",
+              "-AassumePure"
+      )
+      excludeTests = true
+
+  }
 }
 
 task("generate") // We need to create the task so that the generation files can extend it
@@ -54,18 +67,6 @@ apply(from = "gradle/checkstyle.gradle.kts")
 apply(from = "gradle/increment-version.gradle.kts")
 apply(from = "gradle/generate-changelog.gradle.kts")
 
-configure<CheckerFrameworkExtension> {
-    apply(plugin = "org.checkerframework")
-    checkers = listOf(
-            "org.checkerframework.checker.optional.OptionalChecker"
-    )
-    extraJavacArgs = listOf(
-            "-AsuppressWarnings=type.anno.before.modifier,type.anno.before.decl.anno",
-            "-AassumePure"
-    )
-    excludeTests = true
-
-}
 
 configure<PublishingExtension> {
     allprojects {
